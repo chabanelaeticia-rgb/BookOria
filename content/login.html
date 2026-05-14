@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Connexion — Bibliothèque</title>
+  <link rel="stylesheet" href="../style/main.css" />
+  <link rel="stylesheet" href="../style/auth.css" />
+</head>
+<body>
+<div class="page-wrapper">
+
+  <main class="auth-page">
+    <div class="auth-decoration">
+      <div class="auth-orb"></div>
+      <div class="auth-quote">
+        <blockquote>"Un lecteur vit mille vies avant de mourir. Celui qui ne lit jamais n'en vit qu'une."</blockquote>
+        <cite>— George R.R. Martin</cite>
+      </div>
+    </div>
+
+    <div class="auth-panel">
+      <div class="auth-header">
+        <a href="../index.html" class="nav-logo">Biblio<span>thèque</span></a>
+        <h1>Bon retour !</h1>
+        <p>Connectez-vous pour accéder à votre compte.</p>
+      </div>
+
+      <div class="alert alert-error" id="errorAlert"></div>
+      <div class="alert alert-success" id="successAlert"></div>
+
+      <div class="auth-form">
+        <div class="form-group">
+          <label for="email">Adresse email</label>
+          <input type="email" id="email" placeholder="nom@email.com" autocomplete="email" />
+          <div class="error-msg" id="emailError">Veuillez saisir un email valide.</div>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Mot de passe</label>
+          <div class="input-wrap">
+            <input type="password" id="password" placeholder="Votre mot de passe" autocomplete="current-password" />
+            <button type="button" class="toggle-pw" id="togglePw" aria-label="Afficher/masquer">👁</button>
+          </div>
+          <div class="error-msg" id="passwordError">Veuillez saisir votre mot de passe.</div>
+        </div>
+
+        <button class="btn btn-primary btn-full" id="loginBtn" onclick="handleLogin()">Se connecter</button>
+      </div>
+
+      <div class="auth-demo">
+        <p>Comptes de démo :</p>
+        <div class="demo-accounts">
+          <button onclick="fillDemo('karim@email.com','Karim123!')">karim@email.com / Karim123!</button>
+          <button onclick="fillDemo('sara@email.com','Sara456@')">sara@email.com / Sara456@</button>
+        </div>
+      </div>
+
+      <p class="auth-switch">Pas encore de compte ? <a href="register.html">Créer un compte →</a></p>
+    </div>
+  </main>
+
+</div>
+
+<script src="../javascript/nav.js"></script>
+<script src="../javascript/auth.js"></script>
+<script>
+  injectNav('login');
+
+  // Redirect if already logged in
+  if (isLoggedIn()) window.location.href = '../index.html';
+
+  // Toggle password visibility
+  document.getElementById('togglePw').addEventListener('click', () => {
+    const pw = document.getElementById('password');
+    pw.type = pw.type === 'password' ? 'text' : 'password';
+  });
+
+  // Regex patterns
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  function validate() {
+    let valid = true;
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+
+    // Email
+    if (!emailRegex.test(email)) {
+      document.getElementById('email').classList.add('error');
+      document.getElementById('emailError').classList.add('show');
+      valid = false;
+    } else {
+      document.getElementById('email').classList.remove('error');
+      document.getElementById('emailError').classList.remove('show');
+    }
+
+    // Password
+    if (password.length < 1) {
+      document.getElementById('password').classList.add('error');
+      document.getElementById('passwordError').classList.add('show');
+      valid = false;
+    } else {
+      document.getElementById('password').classList.remove('error');
+      document.getElementById('passwordError').classList.remove('show');
+    }
+
+    return valid;
+  }
+
+  function handleLogin() {
+    const errorAlert = document.getElementById('errorAlert');
+    const successAlert = document.getElementById('successAlert');
+    errorAlert.classList.remove('show');
+    successAlert.classList.remove('show');
+
+    if (!validate()) return;
+
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const result = login(email, password);
+
+    if (result.success) {
+      successAlert.textContent = `Bienvenue, ${result.user.prenom} ! Redirection…`;
+      successAlert.classList.add('show');
+      setTimeout(() => { window.location.href = '../index.html'; }, 1200);
+    } else {
+      errorAlert.textContent = result.message;
+      errorAlert.classList.add('show');
+    }
+  }
+
+  function fillDemo(email, pw) {
+    document.getElementById('email').value = email;
+    document.getElementById('password').value = pw;
+  }
+
+  // Enter key
+  document.addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
+</script>
+</body>
+</html>

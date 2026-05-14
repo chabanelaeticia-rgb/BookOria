@@ -1,0 +1,134 @@
+[
+  {
+    "id": 1,
+    "name": "Le Petit Prince",
+    "author": "Antoine de Saint-Exupéry",
+    "category": "Classique",
+    "price": 850,
+    "image": "https://covers.openlibrary.org/b/id/8739161-L.jpg",
+    "description": "Un conte poétique et philosophique sous l'apparence d'un livre pour enfants.",
+    "stock": 12,
+    "rating": 5
+  },
+  {
+    "id": 2,
+    "name": "L'Étranger",
+    "author": "Albert Camus",
+    "category": "Classique",
+    "price": 750,
+    "image": "https://covers.openlibrary.org/b/id/8231502-L.jpg",
+    "description": "Un roman sur l'absurdité de l'existence humaine.",
+    "stock": 8,
+    "rating": 4
+  },
+  {
+    "id": 3,
+    "name": "Dune",
+    "author": "Frank Herbert",
+    "category": "Science-Fiction",
+    "price": 1200,
+    "image": "https://covers.openlibrary.org/b/id/8231456-L.jpg",
+    "description": "L'épopée galactique la plus célèbre de la science-fiction.",
+    "stock": 5,
+    "rating": 5
+  },
+  {
+    "id": 4,
+    "name": "1984",
+    "author": "George Orwell",
+    "category": "Science-Fiction",
+    "price": 950,
+    "image": "https://covers.openlibrary.org/b/id/7222246-L.jpg",
+    "description": "Une dystopie glaçante sur la surveillance totale et la manipulation.",
+    "stock": 10,
+    "rating": 5
+  },
+  {
+    "id": 5,
+    "name": "Harry Potter à l'école des sorciers",
+    "author": "J.K. Rowling",
+    "category": "Fantasy",
+    "price": 1100,
+    "image": "https://covers.openlibrary.org/b/id/10521270-L.jpg",
+    "description": "L'aventure magique du jeune sorcier Harry Potter.",
+    "stock": 20,
+    "rating": 5
+  },
+  {
+    "id": 6,
+    "name": "Le Seigneur des Anneaux",
+    "author": "J.R.R. Tolkien",
+    "category": "Fantasy",
+    "price": 1800,
+    "image": "https://covers.openlibrary.org/b/id/8406786-L.jpg",
+    "description": "L'œuvre fondatrice du genre fantasy moderne.",
+    "stock": 6,
+    "rating": 5
+  },
+  {
+    "id": 7,
+    "name": "Sapiens",
+    "author": "Yuval Noah Harari",
+    "category": "Non-Fiction",
+    "price": 1400,
+    "image": "https://covers.openlibrary.org/b/id/8739532-L.jpg",
+    "description": "Une brève histoire de l'humanité à travers les âges.",
+    "stock": 15,
+    "rating": 4
+  },
+  {
+    "id": 8,
+    "name": "Les Misérables",
+    "author": "Victor Hugo",
+    "category": "Classique",
+    "price": 1350,
+    "image": "https://covers.openlibrary.org/b/id/8406778-L.jpg",
+    "description": "Le chef-d'œuvre de Victor Hugo sur la justice et la rédemption.",
+    "stock": 9,
+    "rating": 5
+  },
+  {
+    "id": 9,
+    "name": "Atomic Habits",
+    "author": "James Clear",
+    "category": "Développement Personnel",
+    "price": 1250,
+    "image": "https://covers.openlibrary.org/b/id/10727433-L.jpg",
+    "description": "Transformer de petites habitudes en résultats extraordinaires.",
+    "stock": 18,
+    "rating": 4
+  },
+  {
+    "id": 10,
+    "name": "La Ferme des Animaux",
+    "author": "George Orwell",
+    "category": "Classique",
+    "price": 700,
+    "image": "https://covers.openlibrary.org/b/id/8231479-L.jpg",
+    "description": "Une fable satirique sur les régimes totalitaires.",
+    "stock": 14,
+    "rating": 4
+  },
+  {
+    "id": 11,
+    "name": "Fondation",
+    "author": "Isaac Asimov",
+    "category": "Science-Fiction",
+    "price": 1050,
+    "image": "https://covers.openlibrary.org/b/id/8406780-L.jpg",
+    "description": "La saga de psychohistoire et la chute d'un empire galactique.",
+    "stock": 7,
+    "rating": 5
+  },
+  {
+    "id": 12,
+    "name": "Le Pouvoir du Moment Présent",
+    "author": "Eckhart Tolle",
+    "category": "Développement Personnel",
+    "price": 1150,
+    "image": "https://covers.openlibrary.org/b/id/8739541-L.jpg",
+    "description": "Un guide spirituel pour vivre pleinement l'instant.",
+    "stock": 11,
+    "rating": 4
+  }
+]

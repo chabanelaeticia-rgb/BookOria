@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bibliothèque — Librairie en ligne</title>
+  <link rel="stylesheet" href="style/main.css" />
+  <link rel="stylesheet" href="style/home.css" />
+</head>
+<body>
+<div class="page-wrapper">
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-bg">
+      <div class="hero-orb orb1"></div>
+      <div class="hero-orb orb2"></div>
+    </div>
+    <div class="container hero-content">
+      <p class="hero-eyebrow">✦ Votre librairie en ligne</p>
+      <h1 class="hero-title">Des livres qui <em>changent</em><br>votre monde</h1>
+      <p class="hero-sub">Des milliers de titres soigneusement sélectionnés — classiques, science-fiction, fantasy, développement personnel et bien plus.</p>
+      <div class="hero-btns">
+        <a href="content/products.html" class="btn btn-primary">Explorer le catalogue</a>
+        <a href="content/register.html" class="btn btn-outline">Créer un compte</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><span class="stat-n">12+</span><span class="stat-l">Livres</span></div>
+        <div class="stat-sep"></div>
+        <div class="stat"><span class="stat-n">4</span><span class="stat-l">Catégories</span></div>
+        <div class="stat-sep"></div>
+        <div class="stat"><span class="stat-n">100%</span><span class="stat-l">Authentiques</span></div>
+      </div>
+    </div>
+    <div class="hero-scroll">
+      <span>↓</span>
+    </div>
+  </section>
+
+  <!-- Categories -->
+  <section class="categories-section">
+    <div class="container">
+      <div class="section-header">
+        <p class="section-eyebrow">✦ Parcourir par genre</p>
+        <h2 class="section-title">Nos <em>catégories</em></h2>
+      </div>
+      <div class="categories-grid">
+        <a href="content/products.html?cat=Classique" class="cat-card">
+          <div class="cat-icon">📚</div>
+          <h3>Classiques</h3>
+          <p>Les œuvres intemporelles de la littérature mondiale</p>
+        </a>
+        <a href="content/products.html?cat=Science-Fiction" class="cat-card">
+          <div class="cat-icon">🚀</div>
+          <h3>Science-Fiction</h3>
+          <p>Voyagez dans des futurs fascinants et des mondes imaginaires</p>
+        </a>
+        <a href="content/products.html?cat=Fantasy" class="cat-card">
+          <div class="cat-icon">🧙</div>
+          <h3>Fantasy</h3>
+          <p>Magie, aventures épiques et univers extraordinaires</p>
+        </a>
+        <a href="content/products.html?cat=Développement Personnel" class="cat-card">
+          <div class="cat-icon">🌱</div>
+          <h3>Développement Personnel</h3>
+          <p>Transformez votre vie avec des lectures inspirantes</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Books -->
+  <section class="featured-section">
+    <div class="container">
+      <div class="section-header">
+        <p class="section-eyebrow">✦ Sélection du mois</p>
+        <h2 class="section-title">Livres <em>populaires</em></h2>
+      </div>
+      <div class="books-grid" id="featuredBooks"></div>
+      <div style="text-align:center;margin-top:2.5rem">
+        <a href="content/products.html" class="btn btn-outline">Voir tout le catalogue →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Banner -->
+  <section class="cta-section">
+    <div class="container">
+      <div class="cta-box">
+        <div class="cta-text">
+          <h2>Commencez votre voyage <em>littéraire</em></h2>
+          <p>Inscrivez-vous gratuitement et accédez à notre catalogue complet.</p>
+        </div>
+        <div class="cta-btns">
+          <a href="content/register.html" class="btn btn-primary">Créer un compte</a>
+          <a href="content/login.html" class="btn btn-outline">Se connecter</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span class="nav-logo">Biblio<span>thèque</span></span>
+        <p>Votre destination pour les meilleurs livres. Une sélection raffinée pour les lecteurs exigeants.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navigation</h4>
+        <ul>
+          <li><a href="index.html">Accueil</a></li>
+          <li><a href="content/products.html">Catalogue</a></li>
+          <li><a href="content/order.html">Mon panier</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Compte</h4>
+        <ul>
+          <li><a href="content/login.html">Connexion</a></li>
+          <li><a href="content/register.html">Inscription</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 Bibliothèque. Tous droits réservés.</span>
+      <span>Projet Universitaire — UMMTO</span>
+    </div>
+  </footer>
+
+</div>
+
+<script src="javascript/nav.js"></script>
+<script src="javascript/auth.js"></script>
+<script>
+  injectNav('home');
+
+  // Load featured books
+  fetch('javascript/products.json')
+    .then(r => r.json())
+    .then(products => {
+      const featured = products.filter(p => p.rating === 5).slice(0, 4);
+      const grid = document.getElementById('featuredBooks');
+      grid.innerHTML = featured.map(p => `
+        <div class="book-card">
+          <div class="book-card-img">
+            <img src="${p.image}" alt="${p.name}" loading="lazy" onerror="this.src='https://via.placeholder.com/200x300/1a1a1a/c9a84c?text=📖'">
+          </div>
+          <div class="book-card-body">
+            <p class="book-card-category">${p.category}</p>
+            <h3 class="book-card-title">${p.name}</h3>
+            <p class="book-card-author">${p.author}</p>
+            <div class="book-card-footer">
+              <span class="book-card-price">${p.price} <span>DA</span></span>
+              <button class="btn btn-primary" style="padding:0.4rem 1rem;font-size:0.75rem" onclick='addToCart(${JSON.stringify(p)})'>+ Panier</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    });
+</script>
+</body>
+</html>

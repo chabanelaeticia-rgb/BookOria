@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Inscription — Bibliothèque</title>
+  <link rel="stylesheet" href="../style/main.css" />
+  <link rel="stylesheet" href="../style/auth.css" />
+</head>
+<body>
+<div class="page-wrapper">
+
+  <main class="auth-page">
+    <div class="auth-decoration">
+      <div class="auth-orb"></div>
+      <div class="auth-quote">
+        <blockquote>"Il n'y a pas d'ami aussi loyal qu'un livre."</blockquote>
+        <cite>— Ernest Hemingway</cite>
+      </div>
+    </div>
+
+    <div class="auth-panel" style="max-width:550px">
+      <div class="auth-header">
+        <a href="../index.html" class="nav-logo">Biblio<span>thèque</span></a>
+        <h1>Créer un compte</h1>
+        <p>Rejoignez notre communauté de lecteurs.</p>
+      </div>
+
+      <div class="alert alert-error" id="errorAlert"></div>
+      <div class="alert alert-success" id="successAlert"></div>
+
+      <div class="auth-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="nom">Nom</label>
+            <input type="text" id="nom" placeholder="Votre nom" autocomplete="family-name" />
+            <div class="error-msg" id="nomError">Nom requis (2 caractères min).</div>
+          </div>
+          <div class="form-group">
+            <label for="prenom">Prénom</label>
+            <input type="text" id="prenom" placeholder="Votre prénom" autocomplete="given-name" />
+            <div class="error-msg" id="prenomError">Prénom requis (2 caractères min).</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Adresse email</label>
+          <input type="email" id="email" placeholder="nom@email.com" autocomplete="email" />
+          <div class="error-msg" id="emailError">Veuillez saisir un email valide.</div>
+        </div>
+
+        <div class="form-group">
+          <label for="phone">Téléphone</label>
+          <input type="tel" id="phone" placeholder="05XXXXXXXX" autocomplete="tel" />
+          <div class="error-msg" id="phoneError">Numéro algérien valide requis (10 chiffres, commence par 05, 06 ou 07).</div>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Mot de passe</label>
+          <div class="input-wrap">
+            <input type="password" id="password" placeholder="8 caractères min, majuscule, chiffre, symbole" autocomplete="new-password" oninput="checkStrength()" />
+            <button type="button" class="toggle-pw" id="togglePw" aria-label="Afficher/masquer">👁</button>
+          </div>
+          <div class="password-strength" id="strengthMeter">
+            <div class="strength-bar"></div>
+            <div class="strength-bar"></div>
+            <div class="strength-bar"></div>
+            <div class="strength-bar"></div>
+            <span class="strength-label" id="strengthLabel"></span>
+          </div>
+          <div class="error-msg" id="passwordError">Mot de passe trop faible. Requis : 8+ caractères, 1 majuscule, 1 chiffre, 1 symbole.</div>
+        </div>
+
+        <div class="form-group">
+          <label for="confirm">Confirmer le mot de passe</label>
+          <input type="password" id="confirm" placeholder="Répétez le mot de passe" autocomplete="new-password" />
+          <div class="error-msg" id="confirmError">Les mots de passe ne correspondent pas.</div>
+        </div>
+
+        <button class="btn btn-primary btn-full" onclick="handleRegister()">Créer mon compte</button>
+      </div>
+
+      <p class="auth-switch">Déjà un compte ? <a href="login.html">Se connecter →</a></p>
+    </div>
+  </main>
+
+</div>
+
+<script src="../javascript/nav.js"></script>
+<script src="../javascript/auth.js"></script>
+<script>
+  injectNav('register');
+
+  if (isLoggedIn()) window.location.href = '../index.html';
+
+  document.getElementById('togglePw').addEventListener('click', () => {
+    const pw = document.getElementById('password');
+    pw.type = pw.type === 'password' ? 'text' : 'password';
+  });
+
+  // RegEx patterns
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const phoneRegex = /^(05|06|07)[0-9]{8}$/;
+  const nameRegex = /^[a-zA-ZÀ-ÿ '-]{2,}$/;
+  const pwStrong = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&\-_#])[A-Za-z\d@$!%*?&\-_#]{8,}$/;
+  const pwMedium = /^(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{6,}$/;
+
+  function checkStrength() {
+    const pw = document.getElementById('password').value;
+    const meter = document.getElementById('strengthMeter');
+    const label = document.getElementById('strengthLabel');
+    meter.className = 'password-strength';
+
+    if (!pw) { label.textContent = ''; return; }
+
+    if (pwStrong.test(pw)) {
+      meter.classList.add('strength-4'); label.textContent = 'Fort ✓';
+    } else if (pwMedium.test(pw) && pw.length >= 8) {
+      meter.classList.add('strength-3'); label.textContent = 'Moyen';
+    } else if (pw.length >= 6) {
+      meter.classList.add('strength-2'); label.textContent = 'Faible';
+    } else {
+      meter.classList.add('strength-1'); label.textContent = 'Très faible';
+    }
+  }
+
+  function setField(id, valid) {
+    const el = document.getElementById(id);
+    const err = document.getElementById(id + 'Error');
+    el.classList.toggle('error', !valid);
+    err.classList.toggle('show', !valid);
+    return valid;
+  }
+
+  function validate() {
+    const nom = document.getElementById('nom').value.trim();
+    const prenom = document.getElementById('prenom').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const password = document.getElementById('password').value;
+    const confirm = document.getElementById('confirm').value;
+
+    let ok = true;
+    ok = setField('nom', nameRegex.test(nom)) && ok;
+    ok = setField('prenom', nameRegex.test(prenom)) && ok;
+    ok = setField('email', emailRegex.test(email)) && ok;
+    ok = setField('phone', phoneRegex.test(phone)) && ok;
+    ok = setField('password', pwStrong.test(password)) && ok;
+    ok = setField('confirm', password === confirm && confirm.length > 0) && ok;
+
+    return ok;
+  }
+
+  function handleRegister() {
+    const errorAlert = document.getElementById('errorAlert');
+    const successAlert = document.getElementById('successAlert');
+    errorAlert.classList.remove('show');
+    successAlert.classList.remove('show');
+
+    if (!validate()) return;
+
+    const nom = document.getElementById('nom').value.trim();
+    const prenom = document.getElementById('prenom').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const phone = document.getElementById('phone').value.trim();
+
+    const result = register(nom, prenom, email, password, phone);
+
+    if (result.success) {
+      successAlert.textContent = `Compte créé avec succès ! Bienvenue, ${result.user.prenom}. Redirection…`;
+      successAlert.classList.add('show');
+      setTimeout(() => { window.location.href = '../index.html'; }, 1500);
+    } else {
+      errorAlert.textContent = result.message;
+      errorAlert.classList.add('show');
+    }
+  }
+
+  document.addEventListener('keydown', e => { if (e.key === 'Enter') handleRegister(); });
+</script>
+</body>
+</html>

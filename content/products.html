@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Catalogue — Bibliothèque</title>
+  <link rel="stylesheet" href="../style/main.css" />
+  <link rel="stylesheet" href="../style/products.css" />
+</head>
+<body>
+<div class="page-wrapper">
+
+  <main>
+    <div class="container">
+
+      <div class="page-header">
+        <p class="section-eyebrow">✦ Notre sélection</p>
+        <h1 class="section-title">Le <em>Catalogue</em></h1>
+      </div>
+
+      <!-- Filters & Search -->
+      <div class="filters-bar">
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="searchInput" placeholder="Rechercher un livre ou un auteur..." />
+        </div>
+        <div class="filter-cats" id="filterCats">
+          <button class="cat-btn active" data-cat="Tous">Tous</button>
+          <button class="cat-btn" data-cat="Classique">Classique</button>
+          <button class="cat-btn" data-cat="Science-Fiction">Science-Fiction</button>
+          <button class="cat-btn" data-cat="Fantasy">Fantasy</button>
+          <button class="cat-btn" data-cat="Développement Personnel">Développement Personnel</button>
+        </div>
+        <div class="sort-wrap">
+          <select id="sortSelect">
+            <option value="default">Trier par : Défaut</option>
+            <option value="price-asc">Prix croissant</option>
+            <option value="price-desc">Prix décroissant</option>
+            <option value="name">Nom A-Z</option>
+            <option value="rating">Note</option>
+          </select>
+        </div>
+      </div>
+
+      <p class="results-count" id="resultsCount"></p>
+
+      <!-- Grid -->
+      <div class="books-grid" id="booksGrid">
+        <div class="loading-state">Chargement des livres…</div>
+      </div>
+
+      <div id="noResults" class="no-results" style="display:none">
+        <span>📭</span>
+        <p>Aucun livre ne correspond à votre recherche.</p>
+      </div>
+
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span class="nav-logo">Biblio<span>thèque</span></span>
+        <p>Votre destination pour les meilleurs livres.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navigation</h4>
+        <ul>
+          <li><a href="../index.html">Accueil</a></li>
+          <li><a href="products.html">Catalogue</a></li>
+          <li><a href="order.html">Mon panier</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Compte</h4>
+        <ul>
+          <li><a href="login.html">Connexion</a></li>
+          <li><a href="register.html">Inscription</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 Bibliothèque.</span>
+      <span>Projet Universitaire — UMMTO</span>
+    </div>
+  </footer>
+
+</div>
+
+<script src="../javascript/nav.js"></script>
+<script src="../javascript/auth.js"></script>
+<script>
+  injectNav('products');
+
+  let allProducts = [];
+  let activeCategory = 'Tous';
+  let searchTerm = '';
+  let sortMode = 'default';
+
+  // Read URL param for category (from homepage links)
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('cat')) {
+    activeCategory = urlParams.get('cat');
+  }
+
+  fetch('../javascript/products.json')
+    .then(r => r.json())
+    .then(data => {
+      allProducts = data;
+      // Set active button
+      document.querySelectorAll('.cat-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.cat === activeCategory);
+      });
+      render();
+    });
+
+  function render() {
+    let list = [...allProducts];
+
+    // Filter category
+    if (activeCategory !== 'Tous') {
+      list = list.filter(p => p.category === activeCategory);
+    }
+
+    // Filter search
+    if (searchTerm) {
+      const q = searchTerm.toLowerCase();
+      list = list.filter(p =>
+        p.name.toLowerCase().includes(q) ||
+        p.author.toLowerCase().includes(q) ||
+        p.category.toLowerCase().includes(q)
+      );
+    }
+
+    // Sort
+    if (sortMode === 'price-asc') list.sort((a,b) => a.price - b.price);
+    else if (sortMode === 'price-desc') list.sort((a,b) => b.price - a.price);
+    else if (sortMode === 'name') list.sort((a,b) => a.name.localeCompare(b.name));
+    else if (sortMode === 'rating') list.sort((a,b) => b.rating - a.rating);
+
+    const grid = document.getElementById('booksGrid');
+    const noRes = document.getElementById('noResults');
+    const count = document.getElementById('resultsCount');
+
+    if (list.length === 0) {
+      grid.innerHTML = '';
+      noRes.style.display = 'flex';
+      count.textContent = '';
+    } else {
+      noRes.style.display = 'none';
+      count.textContent = `${list.length} livre${list.length>1?'s':''} trouvé${list.length>1?'s':''}`;
+      const stars = n => '★'.repeat(n) + '☆'.repeat(5-n);
+      grid.innerHTML = list.map(p => `
+        <div class="book-card" data-id="${p.id}">
+          <div class="book-card-img">
+            <img src="${p.image}" alt="${p.name}" loading="lazy" onerror="this.src='https://via.placeholder.com/200x300/1a1a1a/c9a84c?text=📖'">
+          </div>
+          <div class="book-card-body">
+            <p class="book-card-category">${p.category}</p>
+            <h3 class="book-card-title">${p.name}</h3>
+            <p class="book-card-author">${p.author}</p>
+            <p class="book-rating" title="${p.rating}/5">${stars(p.rating)}</p>
+            <p class="book-desc">${p.description}</p>
+            <div class="book-card-footer">
+              <span class="book-card-price">${p.price.toLocaleString('fr-DZ')} <span>DA</span></span>
+              <button class="btn btn-primary" style="padding:0.4rem 1rem;font-size:0.75rem"
+                onclick='addToCart(${JSON.stringify(p).replace(/'/g, "&#39;")})'>+ Panier</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+  }
+
+  // Category buttons
+  document.getElementById('filterCats').addEventListener('click', e => {
+    if (e.target.classList.contains('cat-btn')) {
+      document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+      e.target.classList.add('active');
+      activeCategory = e.target.dataset.cat;
+      render();
+    }
+  });
+
+  // Search
+  document.getElementById('searchInput').addEventListener('input', e => {
+    searchTerm = e.target.value.trim();
+    render();
+  });
+
+  // Sort
+  document.getElementById('sortSelect').addEventListener('change', e => {
+    sortMode = e.target.value;
+    render();
+  });
+</script>
+</body>
+</html>

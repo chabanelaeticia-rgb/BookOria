@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Commande — Bibliothèque</title>
+  <link rel="stylesheet" href="../style/main.css" />
+  <link rel="stylesheet" href="../style/order.css" />
+</head>
+<body>
+<div class="page-wrapper">
+
+  <main>
+    <div class="container">
+      <div class="page-header">
+        <p class="section-eyebrow">✦ Votre sélection</p>
+        <h1 class="section-title">Mon <em>Panier</em></h1>
+      </div>
+
+      <div class="order-layout" id="orderLayout">
+
+        <!-- Cart items -->
+        <div class="cart-section">
+          <div id="cartItems"></div>
+          <div id="emptyCart" class="empty-cart" style="display:none">
+            <span>📭</span>
+            <h3>Votre panier est vide</h3>
+            <p>Découvrez notre catalogue et ajoutez des livres à votre panier.</p>
+            <a href="products.html" class="btn btn-primary" style="margin-top:1rem">Explorer le catalogue</a>
+          </div>
+        </div>
+
+        <!-- Order summary & form -->
+        <div class="order-sidebar" id="orderSidebar">
+          <div class="order-summary">
+            <h3>Résumé de la commande</h3>
+            <div class="summary-lines" id="summaryLines"></div>
+            <div class="summary-total">
+              <span>Total</span>
+              <span id="totalPrice">0 DA</span>
+            </div>
+          </div>
+
+          <div class="order-form" id="orderForm">
+            <h3>Informations de livraison</h3>
+
+            <div class="alert alert-error" id="orderError"></div>
+            <div class="alert alert-success" id="orderSuccess"></div>
+
+            <div class="form-group">
+              <label for="delivName">Nom complet</label>
+              <input type="text" id="delivName" placeholder="Nom et prénom" />
+              <div class="error-msg" id="delivNameError">Nom requis.</div>
+            </div>
+
+            <div class="form-group">
+              <label for="delivPhone">Téléphone</label>
+              <input type="tel" id="delivPhone" placeholder="05XXXXXXXX" />
+              <div class="error-msg" id="delivPhoneError">Numéro valide requis (05/06/07...).</div>
+            </div>
+
+            <div class="form-group">
+              <label for="delivAddress">Adresse de livraison</label>
+              <textarea id="delivAddress" rows="3" placeholder="Numéro, rue, ville, wilaya…"></textarea>
+              <div class="error-msg" id="delivAddressError">Adresse requise (10 caractères min).</div>
+            </div>
+
+            <div class="form-group">
+              <label for="delivMethod">Mode de paiement</label>
+              <select id="delivMethod">
+                <option value="cash">Paiement à la livraison</option>
+                <option value="ccp">Virement CCP</option>
+                <option value="barid">BaridiMob</option>
+              </select>
+            </div>
+
+            <button class="btn btn-primary btn-full" id="orderBtn" onclick="placeOrder()">
+              ✓ Confirmer la commande
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span class="nav-logo">Biblio<span>thèque</span></span>
+        <p>Votre destination pour les meilleurs livres.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navigation</h4>
+        <ul>
+          <li><a href="../index.html">Accueil</a></li>
+          <li><a href="products.html">Catalogue</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Compte</h4>
+        <ul>
+          <li><a href="login.html">Connexion</a></li>
+          <li><a href="register.html">Inscription</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 Bibliothèque.</span>
+      <span>Projet Universitaire — UMMTO</span>
+    </div>
+  </footer>
+
+</div>
+
+<script src="../javascript/nav.js"></script>
+<script src="../javascript/auth.js"></script>
+<script>
+  injectNav('order');
+
+  const phoneRegex = /^(05|06|07)[0-9]{8}$/;
+  const nameRegex = /^[a-zA-ZÀ-ÿ ']{3,}[\s][a-zA-ZÀ-ÿ ']{2,}$/;
+
+  function renderCart() {
+    const cart = getCart();
+    const cartItems = document.getElementById('cartItems');
+    const emptyCart = document.getElementById('emptyCart');
+    const sidebar = document.getElementById('orderSidebar');
+    const summaryLines = document.getElementById('summaryLines');
+    const totalPrice = document.getElementById('totalPrice');
+
+    if (cart.length === 0) {
+      cartItems.innerHTML = '';
+      emptyCart.style.display = 'flex';
+      sidebar.style.display = 'none';
+    } else {
+      emptyCart.style.display = 'none';
+      sidebar.style.display = 'flex';
+
+      cartItems.innerHTML = cart.map(item => `
+        <div class="cart-item" id="item-${item.id}">
+          <div class="cart-item-img">
+            <img src="${item.image}" alt="${item.name}" onerror="this.src='https://via.placeholder.com/80x120/1a1a1a/c9a84c?text=📖'">
+          </div>
+          <div class="cart-item-info">
+            <p class="cart-item-cat">${item.category}</p>
+            <h4 class="cart-item-name">${item.name}</h4>
+            <p class="cart-item-author">${item.author}</p>
+            <p class="cart-item-price">${item.price.toLocaleString('fr-DZ')} DA / unité</p>
+          </div>
+          <div class="cart-item-controls">
+            <div class="qty-control">
+              <button onclick="changeQty(${item.id}, -1)">−</button>
+              <span>${item.quantity}</span>
+              <button onclick="changeQty(${item.id}, 1)">+</button>
+            </div>
+            <p class="cart-item-subtotal">${(item.price * item.quantity).toLocaleString('fr-DZ')} DA</p>
+            <button class="remove-btn" onclick="removeItem(${item.id})">✕ Retirer</button>
+          </div>
+        </div>
+      `).join('');
+
+      // Summary
+      const total = cart.reduce((s, i) => s + i.price * i.quantity, 0);
+      summaryLines.innerHTML = cart.map(i => `
+        <div class="summary-line">
+          <span>${i.name} × ${i.quantity}</span>
+          <span>${(i.price * i.quantity).toLocaleString('fr-DZ')} DA</span>
+        </div>
+      `).join('') + `
+        <div class="summary-line">
+          <span>Livraison</span>
+          <span style="color:var(--green)">Gratuite</span>
+        </div>`;
+      totalPrice.textContent = `${total.toLocaleString('fr-DZ')} DA`;
+
+      // Pre-fill form if logged in
+      const user = getCurrentUser();
+      if (user) {
+        const nameField = document.getElementById('delivName');
+        if (!nameField.value) nameField.value = `${user.prenom} ${user.nom}`;
+      }
+    }
+  }
+
+  function changeQty(id, delta) {
+    const cart = getCart();
+    const item = cart.find(i => i.id === id);
+    if (!item) return;
+    item.quantity += delta;
+    if (item.quantity <= 0) {
+      removeFromCart(id);
+    } else {
+      saveCart(cart);
+    }
+    renderCart();
+  }
+
+  function removeItem(id) {
+    removeFromCart(id);
+    renderCart();
+  }
+
+  function setField(id, valid) {
+    const el = document.getElementById(id);
+    const err = document.getElementById(id + 'Error');
+    el.classList.toggle('error', !valid);
+    err.classList.toggle('show', !valid);
+    return valid;
+  }
+
+  function placeOrder() {
+    if (!isLoggedIn()) {
+      window.location.href = 'login.html';
+      return;
+    }
+
+    const errAlert = document.getElementById('orderError');
+    const sucAlert = document.getElementById('orderSuccess');
+    errAlert.classList.remove('show');
+    sucAlert.classList.remove('show');
+
+    const name = document.getElementById('delivName').value.trim();
+    const phone = document.getElementById('delivPhone').value.trim();
+    const address = document.getElementById('delivAddress').value.trim();
+
+    let ok = true;
+    ok = setField('delivName', name.length >= 3) && ok;
+    ok = setField('delivPhone', phoneRegex.test(phone)) && ok;
+    ok = setField('delivAddress', address.length >= 10) && ok;
+
+    if (!ok) return;
+
+    const cart = getCart();
+    if (cart.length === 0) {
+      errAlert.textContent = 'Votre panier est vide.';
+      errAlert.classList.add('show');
+      return;
+    }
+
+    const total = cart.reduce((s, i) => s + i.price * i.quantity, 0);
+    const method = document.getElementById('delivMethod').value;
+    const methodLabels = { cash: 'Paiement à la livraison', ccp: 'Virement CCP', barid: 'BaridiMob' };
+
+    // Save order
+    const orders = JSON.parse(localStorage.getItem('bookstore_orders') || '[]');
+    orders.push({
+      id: Date.now(),
+      date: new Date().toLocaleDateString('fr-FR'),
+      items: cart,
+      total,
+      name, phone, address,
+      method: methodLabels[method],
+      status: 'confirmée'
+    });
+    localStorage.setItem('bookstore_orders', JSON.stringify(orders));
+
+    // Clear cart
+    saveCart([]);
+
+    sucAlert.textContent = `✓ Commande confirmée ! Total : ${total.toLocaleString('fr-DZ')} DA — Mode : ${methodLabels[method]}. Merci pour votre achat !`;
+    sucAlert.classList.add('show');
+
+    document.getElementById('orderForm').style.display = 'none';
+    renderCart();
+  }
+
+  renderCart();
+</script>
+</body>
+</html>
